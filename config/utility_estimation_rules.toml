@@ -1,0 +1,28 @@
+[meta]
+version = "2026-11-17"
+currency = "CAD"
+
+[assumptions]
+# Planning assumptions, NOT utility-provider quotes. Review against actual bills.
+monthly_electricity_kwh = 650
+monthly_natural_gas_m3 = 150
+monthly_water_m3 = 19.17
+# Illustrative all-in blended electricity/gas costs, including approximate delivery.
+# Replace with your utility's current tariff and fixed charges before relying on results.
+electricity_all_in_per_kwh = 0.20
+natural_gas_all_in_per_m3 = 0.55
+# Not a provider quote. Use your own annual insurance estimate instead.
+annual_home_insurance = 1800
+# Budget heuristic; adjust for property condition, age and type.
+annual_repair_reserve_pct = 1.0
+
+[toronto_water]
+# 2026 City of Toronto residential block-one volumetric water + wastewater rate.
+# Not applicable outside the City of Toronto. Does not include special adjustments.
+rate_per_m3 = 4.8629
+source = "https://www.toronto.ca/services-payments/property-taxes-utilities/utility-bill/water-rates-and-fees/"
+
+[sources]
+postal_lookup = "https://nominatim.openstreetmap.org/"
+postal_lookup_note = "OpenStreetMap Nominatim public API; approximate geographic lookup, not address verification."
+energy_note = "Electricity and natural-gas prices/usage are editable planning assumptions, not fetched rates."

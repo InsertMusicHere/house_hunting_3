@@ -1,0 +1,86 @@
+Brampton / Springdale
+Condo Townhouse
+Listed for: $ 500,000
+Listed 2 days ago
+
+3 Bedrooms
+3 Bathrooms
+1 Garage
+Listing History
+Price Changes (0)
+Buy/sell history for Unit 7 - 123 Example Road W, Brampton (Condo Townhouse)
+
+Date Start	Date End	Price	Event	Listing ID
+2026-11-13		$500,000	For Sale	W1000001
+2026-10-22	2026-11-13	$510,000	Terminated	W1000002 
+2026-09-16	2026-10-22	$525,000	Terminated	W1000003 
+2026-05-21	2026-07-13	$560,000	Terminated	W1000004 
+Key Facts
+Details
+Rooms
+Key facts for Unit 7 - 123 Example Road W, Springdale, Brampton.
+
+Tax:
+$2,900 / 2025
+Property Type:
+Condo Townhouse, 2-Storey
+Maintenance:
+$500/month
+Included Utility:
+Water, Building Insurance
+Building Age:
+-
+Size:
+1400-15123 feet²
+Parking:
+Built-In 1 garage, total 3 parkings
+Locker:
+None
+Basement:
+Finished
+Listing #:
+W1000001
+Data Source:
+PROPTX
+Predicted Days on Market:
+Fast
+20 days
+60 days
+Very Slow
+Listing Brokerage:
+EXAMPLE REALTY INC.
+Days on Market:
+2 days
+Property Days on Market:
+60 days
+Status Change:
+1 day ago
+Listed on:
+2026-11-13
+Updated on:
+2026-11-14
+Market Demand:
+Buyer's Market
+Balanced
+Seller's Market
+Description:
+Original
+Summary
+AI
+
+This is an invented summary for tests.
+It describes a fictional townhome with a sample kitchen.
+Nothing here comes from a real listing.
+
+Example Secondary School
+0.5 km
+
+Example Elementary School
+0.3 km
+
+October 2026
+Median Price
+$680,000
+October 2026
+New Listings
+16

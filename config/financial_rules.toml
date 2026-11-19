@@ -1,0 +1,233 @@
+# =============================================================================
+# Financial rules for the Financial Calculator (Phase 5).
+#
+# Everything the calculator treats as a rule or a rate lives HERE, not in code.
+# To change a number, edit it and save: the app reads this file on every run.
+# Saved scenarios are then flagged "out of date" until you recalculate them.
+#
+# Scope: Ontario, resale homes, owner-occupied, INSURED (high-ratio) mortgages only,
+# Canadian-resident buyer. New builds (HST), foreign-buyer taxes and uninsured
+# mortgages are deliberately not modelled.
+#
+# Every rule section lists `sources`: ids of the [[sources]] entries at the bottom.
+# Confidence there says how well each number was confirmed on 2026-11-16.
+# =============================================================================
+
+[meta]
+version = "2026-11-16"      # change this label whenever you update any rule below
+retrieved = "2026-11-16"
+jurisdiction = "Ontario, Canada"
+
+# -----------------------------------------------------------------------------
+# YOUR settings (not law). They only pre-fill NEW scenarios; editing them never
+# changes saved scenarios. Dollar amounts are CAD.
+# -----------------------------------------------------------------------------
+[personal]
+# *** Set this yourself. It unlocks the $4,000 Ontario and $4,475 Toronto rebates
+# *** and 30-year insured amortization. false = the cautious choice.
+# Qualifying generally means: you (and your spouse) never owned a home anywhere in the
+# world, you are a Canadian citizen or permanent resident, and you move in within 9 months.
+first_time_buyer = true
+
+# Starting estimates for closing costs (public ballpark figures, NOT rules; use your
+# own lawyer's and inspector's quotes). Legal includes disbursements.
+legal_fees = 2000
+title_insurance = 350
+inspection_costs = 500
+other_closing_costs = 0     # appraisal, adjustments, moving, status certificate, ...
+
+# -----------------------------------------------------------------------------
+# Stress test (qualifying rate). Informational only: this app has no income inputs.
+# Qualifying rate = greater of (contract rate + buffer) and the floor.
+# -----------------------------------------------------------------------------
+[stress_test]
+buffer_pct = 2.00
+floor_pct = 5.25
+sources = ["osfi_mqr"]
+
+# -----------------------------------------------------------------------------
+# Mortgage rules
+# -----------------------------------------------------------------------------
+[mortgage]
+max_amortization_years = 25                 # insured mortgages
+max_amortization_years_first_time_buyer = 30
+# Compounding used when a scenario does not override it. Canadian fixed-rate mortgages
+# usually compound semi-annually and variable-rate monthly (common practice; not
+# independently verified in this research round).
+default_compounding = { Fixed = "semi_annual", Variable = "monthly" }
+sources = ["fcac_rules", "compounding_note"]
+
+# -----------------------------------------------------------------------------
+# Mortgage default insurance (CMHC premium table). Premium is a % of the base loan
+# (purchase price minus down payment) and is added to the mortgage. The provincial
+# sales tax on the premium is NOT added to the mortgage; it is paid in cash at closing.
+# -----------------------------------------------------------------------------
+[insurance]
+max_insurable_price = 1500000               # price must be BELOW this to be insurable
+uninsured_down_payment_pct = 20             # at or above this, insurance is not needed (out of scope)
+max_ltv_pct = 95
+extended_amortization_over_years = 25       # surcharge applies when amortization is longer
+extended_amortization_surcharge_pct = 0.20
+non_traditional_min_ltv_pct = 90            # non-traditional (e.g. borrowed) down payment tier
+non_traditional_rate_pct = 4.50             # applies only above 90% up to 95% loan-to-value
+pst_on_premium_pct = 8.0                    # Ontario
+sources = ["cmhc_premiums", "cmhc_cost", "fcac_rules", "pst_note"]
+
+[[insurance.premium_tiers]]
+max_ltv_pct = 65
+rate_pct = 0.60
+[[insurance.premium_tiers]]
+max_ltv_pct = 75
+rate_pct = 1.70
+[[insurance.premium_tiers]]
+max_ltv_pct = 80
+rate_pct = 2.40
+[[insurance.premium_tiers]]
+max_ltv_pct = 85
+rate_pct = 2.80
+[[insurance.premium_tiers]]
+max_ltv_pct = 90
+rate_pct = 3.10
+[[insurance.premium_tiers]]
+max_ltv_pct = 95
+rate_pct = 4.00
+
+# Minimum down payment, marginal: pct of the part of the price inside each band.
+# (5% of the first $500,000 plus 10% of the rest up to the insurable limit.)
+[[down_payment_minimum]]
+up_to = 500000
+pct = 5
+[[down_payment_minimum]]
+up_to = 1500000
+pct = 10
+
+# -----------------------------------------------------------------------------
+# Ontario land transfer tax: marginal brackets (the last bracket has no `up_to`).
+# The 2.5% bracket applies to homes with one or two single-family residences, which
+# covers every property type this app supports.
+# -----------------------------------------------------------------------------
+[land_transfer.ontario]
+first_time_buyer_rebate_max = 4000
+sources = ["ontario_ltt"]
+
+[[land_transfer.ontario.brackets]]
+up_to = 55000
+rate_pct = 0.5
+[[land_transfer.ontario.brackets]]
+up_to = 250000
+rate_pct = 1.0
+[[land_transfer.ontario.brackets]]
+up_to = 400000
+rate_pct = 1.5
+[[land_transfer.ontario.brackets]]
+up_to = 2000000
+rate_pct = 2.0
+[[land_transfer.ontario.brackets]]
+rate_pct = 2.5
+
+# -----------------------------------------------------------------------------
+# City of Toronto municipal land transfer tax (applies when the property is in the
+# City of Toronto). Rates above $3,000,000 took effect 2026-04-01 (the old 3.5% tier
+# applied from 2024-01-01 to 2026-03-31). The administration fee and HST are added
+# when the property is in Toronto.
+# -----------------------------------------------------------------------------
+[land_transfer.toronto]
+effective_from = "2026-04-01"
+first_time_buyer_rebate_max = 4475
+administration_fee = 102.56
+hst_pct = 13
+sources = ["toronto_mltt", "toronto_admin_fee", "hst_note"]
+
+[[land_transfer.toronto.brackets]]
+up_to = 55000
+rate_pct = 0.5
+[[land_transfer.toronto.brackets]]
+up_to = 250000
+rate_pct = 1.0
+[[land_transfer.toronto.brackets]]
+up_to = 400000
+rate_pct = 1.5
+[[land_transfer.toronto.brackets]]
+up_to = 2000000
+rate_pct = 2.0
+[[land_transfer.toronto.brackets]]
+up_to = 3000000
+rate_pct = 2.5
+[[land_transfer.toronto.brackets]]
+up_to = 4000000
+rate_pct = 4.40
+[[land_transfer.toronto.brackets]]
+up_to = 5000000
+rate_pct = 5.45
+[[land_transfer.toronto.brackets]]
+up_to = 10000000
+rate_pct = 6.50
+[[land_transfer.toronto.brackets]]
+up_to = 20000000
+rate_pct = 7.55
+[[land_transfer.toronto.brackets]]
+rate_pct = 8.60
+
+# =============================================================================
+# Sources. `url` is only filled in when the page appeared in the research results.
+# "official" pages were read through search results, not opened live.
+# =============================================================================
+[[sources]]
+id = "cmhc_premiums"
+label = "CMHC: Premium information for homeowner and small rental loans (premium tiers, 0.20% surcharge beyond 25 years, 4.50% non-traditional down payment)"
+url = "https://www.cmhc-schl.gc.ca/professionals/project-funding-and-mortgage-financing/mortgage-loan-insurance/mortgage-loan-insurance-homeownership-programs/premium-information-for-homeowner-and-small-rental-loans"
+confidence = "high (official CMHC page)"
+
+[[sources]]
+id = "cmhc_cost"
+label = "CMHC: Mortgage loan insurance cost (premium table; provincial sales tax is not added to the loan)"
+url = "https://www.cmhc-schl.gc.ca/consumers/home-buying/mortgage-loan-insurance-for-consumers/cmhc-mortgage-loan-insurance-cost"
+confidence = "high (official CMHC page)"
+
+[[sources]]
+id = "osfi_mqr"
+label = "OSFI: Minimum qualifying rate (greater of contract rate + 2% or 5.25%)"
+url = "https://www.osfi-bsif.gc.ca/en/supervision/financial-institutions/banks/minimum-qualifying-rate-uninsured-mortgages"
+confidence = "high (official OSFI page; the same formula is applied to insured mortgages per several lender sources)"
+
+[[sources]]
+id = "fcac_rules"
+label = "Financial Consumer Agency of Canada / Department of Finance Canada: Dec 15, 2024 rules ($1.5M insurable price limit, 5% / 10% minimum down payment bands, 30-year insured amortization for first-time buyers and new builds)"
+url = "https://wowa.ca/cmhc-mortgage-rules"
+confidence = "medium-high (secondary sites quoting the government rules; official pages not opened)"
+
+[[sources]]
+id = "pst_note"
+label = "Ontario provincial sales tax on the insurance premium: 8%, paid at closing"
+url = "https://calcnorth.com/blog/cmhc-mortgage-rules-canada-2026"
+confidence = "medium (rate from secondary sources; CMHC confirms it cannot be added to the loan). Please confirm."
+
+[[sources]]
+id = "ontario_ltt"
+label = "Ontario Ministry of Finance: Land Transfer Tax Act brackets and first-time homebuyer refund (up to $4,000)"
+url = "https://www.paxlaw.ca/blog/real-estate-law/ontario-land-transfer-tax-rates-refund-exemptions/"
+confidence = "high (same figures on six or more independent sites citing ontario.ca; official page not opened)"
+
+[[sources]]
+id = "toronto_mltt"
+label = "City of Toronto: Municipal land transfer tax rates (historical page confirms the old 3.5% tier ended 2026-03-31; new tiers from Teraview notice and calculator sites; first-time buyer rebate up to $4,475)"
+url = "https://www.toronto.ca/services-payments/property-taxes-utilities/municipal-land-transfer-tax-mltt/municipal-land-transfer-tax-mltt-rates-and-fees/municipal-land-transfer-tax-historical-rates-fees/"
+confidence = "high up to $4,000,000; medium above (top tiers from secondary sources; sources split between 7.5% and 7.55%, 7.55% used)"
+
+[[sources]]
+id = "toronto_admin_fee"
+label = "Toronto MLTT administration fee of $102.56 plus HST (single secondary source)"
+url = "https://wowa.ca/calculators/toronto-land-transfer-tax"
+confidence = "low-medium (one source). Please confirm."
+
+[[sources]]
+id = "hst_note"
+label = "Ontario HST 13% (general knowledge; not looked up in this research round)"
+url = ""
+confidence = "high but unchecked"
+
+[[sources]]
+id = "compounding_note"
+label = "Fixed semi-annual / variable monthly compounding is common Canadian practice (not independently verified in this research round). Override per scenario."
+url = ""
+confidence = "unverified"

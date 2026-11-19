@@ -1,0 +1,16 @@
+--- a/services/scenarios.py
++++ b/services/scenarios.py
+@@ -56,6 +56,17 @@
+         other_closing_costs=p.other_closing_costs, non_traditional_down_payment=False,
+     )
++    # A new scenario inherits saved monthly estimates from the property's
++    # primary (or oldest available) scenario, without sharing mortgage inputs.
++    existing = repo.scenarios_for_property(session, prop.id)
++    if existing:
++        source = existing[0]
++        for field in (
++            "electricity", "natural_gas", "water", "home_insurance", "internet",
++            "water_heater_rental", "repair_reserve",
++        ):
++            setattr(sc, field, getattr(source, field))
+     prop.financials.append(sc)

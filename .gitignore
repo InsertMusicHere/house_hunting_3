@@ -1,0 +1,19 @@
+# Secrets - never commit
+.streamlit/secrets.toml
+.streamlit/secrets.toml.example
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Generated
+exports/*
+!exports/.gitkeep
+
+# Editor / OS
+.vscode/
+.DS_Store
